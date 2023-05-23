@@ -57,8 +57,21 @@
       border-right: 1px solid rgba(255, 255, 255, 0.5);
       padding-right: 10px; /* Adjust the padding as needed */
     }
+
     /* --------------------------------NAVIGATION BAR --------------------------------*/
   </style>
+   <script>
+    function updateTime() {
+        var d = new Date();
+        var hours = d.getHours() % 12;
+        hours = hours ? hours : 12;
+        var test = ("00" + d.getDate()).slice(-2) + " " + ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'][(d.getMonth())] + " " + d.getFullYear();
+        var test2 = '\n' + ("00" + hours).slice(-2) + ":" + ("00" + d.getMinutes()).slice(-2) + ":" + ("00" + d.getSeconds()).slice(-2) + ' ' + (d.getHours() >= 12 ? 'PM' : 'AM');
+
+        document.getElementById("counter").innerHTML = test + "<br>" + test2 ;
+    }
+    setInterval(updateTime, 1000);
+</script>
 </head>
 <body style="background-color: #ffffff;">
     {% load static %}
@@ -79,11 +92,9 @@
           <a class="nav-link" href="">New Transaction</a>
         </li>
       </ul>
-      <ul class="navbar-nav ml-auto">
-        <li class="nav-item">
-          <a class="nav-link"><p style="color: white;" id="time"></p></a>
-        </li>
-      </ul>
+    </div>
+    <div style="text-align: right;">
+      <p style="color: white; text-align: right ;" id="counter"></p>
     </div>
   </nav>
 <div class="container-fluid">
@@ -94,24 +105,5 @@
   <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
-  <script>
-    function updateTime() {
-  const now = new Date();
-  const hours = now.getHours();
-  const minutes = now.getMinutes();
-  const seconds = now.getSeconds();
-
-  const formattedTime = `${padZero(hours)}:${padZero(minutes)}:${padZero(seconds)}`;
-
-  document.getElementById("time").textContent = formattedTime;
-}
-
-function padZero(number) {
-  return number.toString().padStart(2, "0");
-}
-
-// Update the time every second
-setInterval(updateTime, 1000);
-  </script>
 </body>
 </html>
