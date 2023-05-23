@@ -9,20 +9,29 @@
 <hr>
 <!-- /* --------------------------------Input Accounts --------------------------------*/ -->
 <form method="POST" action="">
+{% csrf_token %}
 <table>
     <tbody>
         <tr>
             <td>Account Category:</td>
-            <td><input type="text"></td>
+            <td>
+                <select name="AccCat" id="AccCat">
+                    <option value="1">Asset</option>
+                    <option value="2">Liability</option>
+                    <option value="3">Equity</option>
+                    <option value="4">Revenue</option>
+                    <option value="5">Expense</option>
+                </select>
+            </td>
         </tr>
         <tr>
             <td>Account Name:</td>
-            <td><input type="text"></td>
+            <td><input name="AccName" type="text"></td>
         </tr>
         <tr>
             <td>To-Increase:</td>
             <td>
-                <select name="To_Increase" id="To_Increase">
+                <select name="To_Increase">
                     <option value="Debit">Debit</option>
                     <option value="Credit">Credit</option>
                 </select>

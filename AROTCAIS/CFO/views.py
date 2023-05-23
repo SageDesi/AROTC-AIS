@@ -45,4 +45,11 @@ class RegisterPage(FormView):
         return super(RegisterPage, self).get(*args, **kwargs)
 
 def ChartOfAccounts(request):
+    if request.method == "POST":
+        AccCat = request.POST['AccCat']
+        To_Increase = request.POST['To_Increase']
+        AccDescription = request.POST['AccDescription']
+        SuperCoa = SuperCOA(SuperID=AccCat)
+        Acc = Product(ProductName=prodname, ProductCost=prodprice, ProductStock=0)
+        new_prod.save()
     return render(request, "CFO/ChartOfAccounts.html")
