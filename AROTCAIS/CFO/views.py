@@ -17,6 +17,8 @@ from django.db import transaction
 # from .models import Task
 from .forms import PositionForm
 
+from .models import *
+
 
 class CustomLoginView(LoginView):
     template_name = 'CFO/login.html'
@@ -45,11 +47,14 @@ class RegisterPage(FormView):
         return super(RegisterPage, self).get(*args, **kwargs)
 
 def ChartOfAccounts(request):
+    Account = COA.objects.all()
     if request.method == "POST":
-        AccCat = request.POST['AccCat']
+        AccCatVal = request.POST['AccCat'] #Values are '1' for Asset, '2' for Liability, and so on. AccCatVal is short for Account Category Value
+        SubID = request.POST['SubID']
+        AccCat = SuperCOA.objects.get(pk=AccCatVal).SuperID_Name
+        AccName = request.POST['AccName']
         To_Increase = request.POST['To_Increase']
         AccDescription = request.POST['AccDescription']
-        SuperCoa = SuperCOA(SuperID=AccCat)
-        Acc = Product(ProductName=prodname, ProductCost=prodprice, ProductStock=0)
-        new_prod.save()
-    return render(request, "CFO/ChartOfAccounts.html")
+        Acc = COA(SuperID=AccCatVal, SubID=SubID, AccountName=AccName, AccountCategory=AccCat, To_Increase=To_Increase, AccountDescription=AccDescription)
+        Acc.save()
+    return render(request, "CFO/ChartOfAccounts.html", {'Account':Account}) 

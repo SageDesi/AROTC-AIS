@@ -13,6 +13,10 @@
 <table>
     <tbody>
         <tr>
+            <td>SubID:</td>
+            <td><input name="SubID" type="text"></td>
+        </tr>
+        <tr>
             <td>Account Category:</td>
             <td>
                 <select name="AccCat" id="AccCat">
@@ -44,7 +48,7 @@
     </tbody>
 </table>
 <br>
-<button>Add Account</button>
+<button type="submit">Add Account</button>
 <hr>
 </form>
 <!-- /* --------------------------------Input Accounts --------------------------------*/ -->
@@ -54,7 +58,7 @@
 <!-- /* --------------------------------Chart of Accounts Display --------------------------------*/ -->
 <table>
     <thead>
-        <th>Number</th>
+        <th>COA ID</th>
         <th>Account Name</th>
         <th>To-Increase</th>
         <th>Account Category</th>
@@ -62,7 +66,13 @@
     </thead>
 
     <tbody>
-
+        {% for x in Account %}
+        <td>{{x.concatenated_id}}</td>
+        <td>{{x.AccountName}}</td>
+        <td>{{x.To_Increase}}</td>
+        <td>{{x.AccountCategory}}</td>
+        <td>{{x.AccountDescription}}</td>
+        {% endfor %}
     </tbody>
 </table>
 <!-- /* --------------------------------Chart of Accounts Display --------------------------------*/ -->
