@@ -8,28 +8,36 @@
 {% block content %}
 <hr>
 <!-- /* --------------------------------Input Accounts --------------------------------*/ -->
+<form method="POST" action="">
 <table>
     <tbody>
         <tr>
             <td>Account Category:</td>
             <td><input type="text"></td>
         </tr>
-
         <tr>
             <td>Account Name:</td>
             <td><input type="text"></td>
         </tr>
         <tr>
             <td>To-Increase:</td>
-            <td><input type="text"></td>
+            <td>
+                <select name="To_Increase" id="To_Increase">
+                    <option value="Debit">Debit</option>
+                    <option value="Credit">Credit</option>
+                </select>
+            </td>
         </tr>
         <tr>
-            <td>Account Description</td>
-            <td><textarea name="description" rows="4" cols="50"></textarea></td>
+            <td>Account Description:</td>
+            <td><textarea name="AccDescription" rows="2" cols="50"></textarea></td>
         </tr>
     </tbody>
 </table>
+<br>
+<button>Add Account</button>
 <hr>
+</form>
 <!-- /* --------------------------------Input Accounts --------------------------------*/ -->
 
 
