@@ -24,7 +24,7 @@ class COA(models.Model):
     AccountName = models.CharField(max_length=30, null=True, blank=True)
     To_Increase = models.CharField(max_length=10, null=False, blank=False)
     AccountCategory = models.CharField(max_length=15, null=False, blank=False)
-    AccountDescription = models.CharField(max_length=100, null=True, blank=True)
+    AccountDescription = models.CharField(max_length=500, null=True, blank=True)
     objects = models.Manager()
 
     def __str__(self):
@@ -34,10 +34,12 @@ class JournalEntry(models.Model):
     JournalID = models.AutoField(primary_key=True)
     DateRealized = models.DateTimeField(auto_now=False, null=True)
     DateInputted = models.DateTimeField(auto_now=False, null=True)
-    DebitedAccount = models.ForeignKey(COA, on_delete=models.CASCADE, related_name='debited_entries')
-    DebitedAmount = models.DecimalField(max_digits=10, decimal_places=2)
-    CreditedAccount = models.ForeignKey(COA, on_delete=models.CASCADE, related_name='credited_entries')
-    CreditedAmount = models.DecimalField(max_digits=10, decimal_places=2)
-    JournalDescription = models.CharField(max_length=100, null=True, blank=True)
+    JournalDescription = models.CharField(max_length=500, null=True, blank=True)
     Receipt = models.ImageField(upload_to='images/', null=True)
     objects = models.Manager()
+
+class Transaction(models.Model):
+    JournalID = models.ForeignKey(JournalEntry, on_delete=models.CASCADE)
+    TransactionID = models.AutoField(primary_key=True)
+    TransactionCategory = models.CharField(max_length=15, null=False, blank=False)
+    TransactionAmount = models.DecimalField(max_digits=10, decimal_places=2)

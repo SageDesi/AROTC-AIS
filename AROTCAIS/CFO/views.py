@@ -47,7 +47,7 @@ class RegisterPage(FormView):
         return super(RegisterPage, self).get(*args, **kwargs)
 
 def ChartOfAccounts(request):
-    Account = COA.objects.all()
+    Account = COA.objects.order_by('concatenated_id')
     if request.method == "POST":
         AccCatVal = request.POST['AccCat'] #Values are '1' for Asset, '2' for Liability, and so on. AccCatVal is short for Account Category Value
         SubID = request.POST['SubID']
@@ -60,4 +60,5 @@ def ChartOfAccounts(request):
     return render(request, "CFO/ChartOfAccounts.html", {'Account':Account}) 
 
 def JournalEntry(request):
-    return render(request, "CFO/JournalEntry.html") 
+    Account = COA.objects.order_by('concatenated_id')
+    return render(request, "CFO/JournalEntry.html", {'Account':Account}) 
