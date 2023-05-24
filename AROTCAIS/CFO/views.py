@@ -58,3 +58,6 @@ def ChartOfAccounts(request):
         Acc = COA(SuperID=AccCatVal, SubID=SubID, AccountName=AccName, AccountCategory=AccCat, To_Increase=To_Increase, AccountDescription=AccDescription)
         Acc.save()
     return render(request, "CFO/ChartOfAccounts.html", {'Account':Account}) 
+
+def JournalEntry(request):
+    return render(request, "CFO/JournalEntry.html") 

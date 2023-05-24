@@ -1,0 +1,77 @@
+{% extends 'CFO/Index.html' %}
+{% load static %}
+
+{% block title %}
+<title>Chart of Accounts</title>
+{% endblock %}
+
+{% block content %}
+<hr>
+<!-- /* --------------------------------Input Accounts --------------------------------*/ -->
+<form method="POST" action="">
+{% csrf_token %}
+<table>
+    <thead>
+        <tr>
+            <th>&nbsp;</th>
+            <th>Accounts</th>
+            <th>Debit</th>
+            <th>Credit</th>
+            <th>Description</th>
+            <th>&nbsp;</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td></td>
+            <td>
+                <select name="" id="">
+
+                </select>
+            </td>
+            <td><input type="text"></td>
+            <td><input type="text"></td>
+            <td><textarea name="" id="" cols="50" rows="2"></textarea></td>
+            <td></td>
+        </tr>
+        <tr>
+            
+        </tr>
+        <tr>
+            
+        </tr>
+        <tr>
+            
+        </tr>
+    </tbody>
+</table>
+<br>
+<button type="submit">Add Transaction</button>
+<hr>
+</form>
+<!-- /* --------------------------------Input Accounts --------------------------------*/ -->
+
+
+
+<!-- /* --------------------------------Journal Entries Display --------------------------------*/ -->
+<table>
+    <thead>
+        <th>Journal ID</th>
+        <th>Date</th>
+        <th>General Journal</th>
+        <th>Debit</th>
+        <th>Credit</th>
+    </thead>
+
+    <tbody>
+        <!-- {% for x in Account %}
+        <td>{{x.concatenated_id}}</td>
+        <td>{{x.AccountName}}</td>
+        <td>{{x.To_Increase}}</td>
+        <td>{{x.AccountCategory}}</td>
+        <td>{{x.AccountDescription}}</td>
+        {% endfor %} -->
+    </tbody>
+</table>
+<!-- /* --------------------------------Journal Entries Display --------------------------------*/ -->
+{% endblock %}
