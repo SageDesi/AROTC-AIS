@@ -21,14 +21,7 @@
                 <th>Cr. Amount</th>
                 <th>Description</th>
             </tr>
-        </thead>
-        <!-- <tbody>
-            <tr id="DebitRows">
-            </tr>
-            <tr><td colspan="6"><hr class="dashed-line"></td></tr>
-            <tr id="CreditRows">
-            </tr>
-        </tbody> -->
+        </thead>-->
         <tbody id="debit">
         </tbody>
         <tfoot id="credit">
@@ -36,7 +29,7 @@
         </tfoot>
     </table>
     <br>
-    <button type="submit" onclick="submitForm()">Add Transaction</button>
+    <button type="button" onclick="submitForm()">Add Transaction</button>
 </form>
 <hr>
 <!-- /* --------------------------------Journal Entries Display --------------------------------*/ -->
@@ -226,60 +219,26 @@ function addCreditedAccount() {
   });
 }
 
+function submitForm() {
+  var debitedAccountsDict = {};
+  var creditedAccountsDict = {};
 
+  // Creating debitedAccounts dictionary
+  for (var i = 0; i < debitedAccounts.length; i++) {
+    debitedAccountsDict[debitedAccounts[i]] = debitAmounts[i] || 0;
+  }
+
+  // Creating creditedAccounts dictionary
+  for (var i = 0; i < creditedAccounts.length; i++) {
+    creditedAccountsDict[creditedAccounts[i]] = creditAmounts[i] || 0;
+  }
+
+  console.log("Debited Accounts Dictionary:", debitedAccountsDict);
+  console.log("Credited Accounts Dictionary:", creditedAccountsDict);
+
+  // Rest of the form submission logic...
+}
 document.getElementById("addDebitedAccountBtn").addEventListener("click", addDebitedAccount);
 document.getElementById("addCreditedAccountBtn").addEventListener("click", addCreditedAccount);
 </script>
-
-<!-- <script>
-    // Function to create a new row
-// Function to create a new row
-function createRow() {
-  var row = document.createElement("tr");
-  var deleteCell = document.createElement("td");
-  var accountsCell = document.createElement("td");
-  var drAmountCell = document.createElement("td");
-  var crAmountCell = document.createElement("td");
-  var descriptionCell = document.createElement("td");
-
-  // Set the content of the cells to 'test'
-  accountsCell.textContent = 'test';
-  drAmountCell.textContent = 'test';
-  crAmountCell.textContent = 'test';
-  descriptionCell.textContent = 'test';
-  
-  // Append cells to the row
-  row.appendChild(deleteCell);
-  row.appendChild(accountsCell);
-  row.appendChild(drAmountCell);
-  row.appendChild(crAmountCell);
-  row.appendChild(descriptionCell);
-  
-  return row;
-}
-
-
-// Function to add a debited account row
-function addDebitedAccountRow() {
-  var debitRows = document.getElementById("DebitRows");
-  var newRow = createRow();
-  debitRows.appendChild(newRow);
-}
-
-// Function to add a credited account row
-function addCreditedAccountRow() {
-  var creditRows = document.getElementById("CreditRows");
-  var newRow = createRow();
-  creditRows.appendChild(newRow);
-}
-
-// Event listener for adding debited account row
-var addDebitedAccountBtn = document.getElementById("addDebitedAccountBtn");
-addDebitedAccountBtn.addEventListener("click", addDebitedAccountRow);
-
-// Event listener for adding credited account row
-var addCreditedAccountBtn = document.getElementById("addCreditedAccountBtn");
-addCreditedAccountBtn.addEventListener("click", addCreditedAccountRow);
-
-</script> -->
 {% endblock %}
