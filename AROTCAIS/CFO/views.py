@@ -8,6 +8,7 @@ from django.contrib.auth.views import LoginView
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth import login
+from django.contrib import messages
 
 # Imports for Reordering Feature
 from django.views import View
@@ -69,7 +70,7 @@ def EditAccount(request,pk):
     if(request.method == "POST"):
         AccCatVal = request.POST['AccCat'] #Values are '1' for Asset, '2' for Liability, and so on. AccCatVal is short for Account Category Value
         SubID = request.POST['SubID']
-        # AccCat = SuperCOA.objects.get(pk=AccCatVal).SuperID_Name
+        AccCat = SuperCOA.objects.get(pk=AccCatVal).SuperID_Name
         AccName = request.POST['AccName']
         To_Increase = request.POST['To_Increase']
         AccDescription = request.POST['AccDescription']
