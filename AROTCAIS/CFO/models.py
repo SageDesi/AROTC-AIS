@@ -29,6 +29,10 @@ class COA(models.Model):
 
     def __str__(self):
         return "ID: " + str(self.concatenated_id) + " Account Name: " + str(self.AccountName) + " Account Category: " + str(self.AccountCategory)
+    
+    def getPK(self):
+        return self.pk
+
 
 class JournalEntry(models.Model):
     JournalID = models.AutoField(primary_key=True)

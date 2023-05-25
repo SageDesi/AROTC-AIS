@@ -1,0 +1,107 @@
+{% extends 'CFO/Index.html' %}
+{% load static %}
+
+{% block title %}
+<title>Edit Account</title>
+{% endblock %}
+
+{% block content %}
+<hr>
+<!-- /* --------------------------------Edit Account--------------------------------*/ -->
+<div class="container">
+    {% include 'CFO/messages.html' %}
+    <h1>Edit Account</h1>
+    <form method="POST" action="">
+    {% csrf_token %}
+    <table>
+        <tbody>
+            <tr>
+                <td>SubID:</td>
+                <td><input name="SubID" type="text" style="width:100%;" placeholder="{{acc.SubID}}"></td>
+            </tr>
+            <tr>
+                <td>Account Category:</td>
+                <td>
+                    {% if acc.AccountCategory == "Asset"  %}
+                    <select name="AccCat" id="AccCat" style="width:100%;">
+                        <option value="1" selected>Asset</option>
+                        <option value="2">Liability</option>
+                        <option value="3">Equity</option>
+                        <option value="4">Revenue</option>
+                        <option value="5">Expense</option>
+                    </select>
+                    {% endif %}
+                    {% if acc.AccountCategory == "Liability"  %}
+                    <select name="AccCat" id="AccCat" style="width:100%;">
+                        <option value="1" >Asset</option>
+                        <option value="2" selected>Liability</option>
+                        <option value="3">Equity</option>
+                        <option value="4">Revenue</option>
+                        <option value="5">Expense</option>
+                    </select>
+                    {% endif %}
+                    {% if acc.AccountCategory == "Equity"  %}
+                    <select name="AccCat" id="AccCat" style="width:100%;">
+                        <option value="1" >Asset</option>
+                        <option value="2">Liability</option>
+                        <option value="3" selected>Equity</option>
+                        <option value="4">Revenue</option>
+                        <option value="5">Expense</option>
+                    </select>
+                    {% endif %}
+                    {% if acc.AccountCategory == "Revenue"  %}
+                    <select name="AccCat" id="AccCat" style="width:100%;">
+                        <option value="1" >Asset</option>
+                        <option value="2">Liability</option>
+                        <option value="3">Equity</option>
+                        <option value="4" selected>Revenue</option>
+                        <option value="5">Expense</option>
+                    </select>
+                    {% endif %}
+                    {% if acc.AccountCategory == "Expense"  %}
+                    <select name="AccCat" id="AccCat" style="width:100%;">
+                        <option value="1" >Asset</option>
+                        <option value="2">Liability</option>
+                        <option value="3">Equity</option>
+                        <option value="4" >Revenue</option>
+                        <option value="5" selected>Expense</option>
+                    </select>
+                    {% endif %}
+                </td>
+            </tr>
+            <tr>
+                <td>Account Name:</td>
+                <td><input name="AccName" type="text" style="width:100%;" placeholder="{{acc.AccountName}}"></td>
+            </tr>
+            <tr>
+                <td>To-Increase:</td>
+                <td>
+                    {% if acc.To_Increase == "Debit"  %}
+                    <select name="To_Increase" style="width:100%;">
+                        <option value="Debit" selected>Debit</option>
+                        <option value="Credit">Credit</option>
+                    </select>
+                    {% else %}
+                    <select name="To_Increase" style="width:100%;">
+                        <option value="Debit" >Debit</option>
+                        <option value="Credit" selected>Credit</option>
+                    </select>
+                    {% endif %}
+                </td>
+            </tr>
+            <tr>
+                <td>Account Description:</td>
+                <td><textarea name="AccDescription" rows="3" cols="50" style="width:100%;">{{acc.AccountDescription}}</textarea></td>
+            </tr>
+        </tbody>
+    </table>
+    <br>
+    <button class="btn btn-success" type="submit" style="width:12%;">Save</button>
+    <button class="btn btn-primary" type="reset" style="width:12%;">Clear</button>
+    <hr>
+    </form>
+</div>
+
+<!-- /* --------------------------------Edit Account --------------------------------*/ -->
+
+{% endblock %}

@@ -8,76 +8,92 @@
 {% block content %}
 <hr>
 <!-- /* --------------------------------Input Accounts --------------------------------*/ -->
-<h1>Input New Account</h1>
-<form method="POST" action="">
-{% csrf_token %}
-<table>
-    <tbody>
-        <tr>
-            <td>SubID:</td>
-            <td><input name="SubID" type="text"></td>
-        </tr>
-        <tr>
-            <td>Account Category:</td>
-            <td>
-                <select name="AccCat" id="AccCat">
-                    <option value="1">Asset</option>
-                    <option value="2">Liability</option>
-                    <option value="3">Equity</option>
-                    <option value="4">Revenue</option>
-                    <option value="5">Expense</option>
-                </select>
-            </td>
-        </tr>
-        <tr>
-            <td>Account Name:</td>
-            <td><input name="AccName" type="text"></td>
-        </tr>
-        <tr>
-            <td>To-Increase:</td>
-            <td>
-                <select name="To_Increase">
-                    <option value="Debit">Debit</option>
-                    <option value="Credit">Credit</option>
-                </select>
-            </td>
-        </tr>
-        <tr>
-            <td>Account Description:</td>
-            <td><textarea name="AccDescription" rows="2" cols="50"></textarea></td>
-        </tr>
-    </tbody>
-</table>
-<br>
-<button type="submit">Add Account</button>
-<hr>
-</form>
+<div class="container">
+    <h1>Input New Account</h1>
+    <form method="POST" action="">
+    {% csrf_token %}
+    <table>
+        <tbody>
+            <tr>
+                <td>SubID:</td>
+                <td><input name="SubID" type="text" style="width:100%;"></td>
+            </tr>
+            <tr>
+                <td>Account Category:</td>
+                <td>
+                    <select name="AccCat" id="AccCat" style="width:100%;">
+                        <option value="1">Asset</option>
+                        <option value="2">Liability</option>
+                        <option value="3">Equity</option>
+                        <option value="4">Revenue</option>
+                        <option value="5">Expense</option>
+                    </select>
+                </td>
+            </tr>
+            <tr>
+                <td>Account Name:</td>
+                <td><input name="AccName" type="text" style="width:100%;"></td>
+            </tr>
+            <tr>
+                <td>To-Increase:</td>
+                <td>
+                    <select name="To_Increase" style="width:100%;">
+                        <option value="Debit">Debit</option>
+                        <option value="Credit">Credit</option>
+                    </select>
+                </td>
+            </tr>
+            <tr>
+                <td>Account Description:</td>
+                <td><textarea name="AccDescription" rows="3" cols="50" style="width:100%;"></textarea></td>
+            </tr>
+        </tbody>
+    </table>
+    <br>
+    <button class="btn btn-success" type="submit" style="width:12%;">Add Account</button>
+    <button class="btn btn-primary" type="reset" style="width:12%;">Clear</button>
+    <hr>
+    </form>
+</div>
+
 <!-- /* --------------------------------Input Accounts --------------------------------*/ -->
+
+<br>
+<br>
 
 
 
 <!-- /* --------------------------------Chart of Accounts Display --------------------------------*/ -->
-<h1>Accounts</h1>
-<table>
-    <thead>
-        <th>COA ID</th>
-        <th>Account Name</th>
-        <th>To-Increase</th>
-        <th>Account Category</th>
-        <th>Account Description</th>
-    </thead>
+<div class="container">
+    {% include 'CFO/messages.html' %}
+    <h1>Accounts</h1>
+    <table>
+        <thead>
+            <th>COA ID</th>
+            <th>Account Name</th>
+            <th>To-Increase</th>
+            <th>Account Category</th>
+            <th>Account Description</th>
+            <th class="text-center" scope="col">Action</th>
+        </thead>
+    
+        <tbody>
+            {% for x in Account %}
+            <tr>
+                <td>{{x.concatenated_id}}</td>
+                <td>{{x.AccountName}}</td>
+                <td>{{x.To_Increase}}</td>
+                <td>{{x.AccountCategory}}</td>
+                <td>{{x.AccountDescription}}</td>
+                <td>
+                    <a class="btn btn-secondary" href="{% url 'EditAccount' pk=x.pk %}" style="width:100%;">Edit</a>
+                    <a class="btn btn-danger" href="#" style="width:100%;">Delete</a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
 
-    <tbody>
-        {% for x in Account %}
-        <tr>
-            <td>{{x.concatenated_id}}</td>
-            <td>{{x.AccountName}}</td>
-            <td>{{x.To_Increase}}</td>
-            <td>{{x.AccountCategory}}</td>
-            <td>{{x.AccountDescription}}</td>
-        </tr>
-        {% endfor %}
-    </tbody>
-</table>
 <!-- /* --------------------------------Chart of Accounts Display --------------------------------*/ -->
 {% endblock %}

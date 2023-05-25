@@ -1,4 +1,4 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.views.generic.list import ListView
 from django.views.generic.detail import DetailView
 from django.views.generic.edit import CreateView, UpdateView, DeleteView, FormView
@@ -8,6 +8,7 @@ from django.contrib.auth.views import LoginView
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth import login
+from django.contrib import messages
 
 # Imports for Reordering Feature
 from django.views import View
@@ -20,7 +21,7 @@ import json
 from .forms import PositionForm
 
 from .models import *
-
+from .models import COA
 
 class CustomLoginView(LoginView):
     template_name = 'CFO/login.html'
@@ -61,50 +62,31 @@ def ChartOfAccounts(request):
         Acc.save()
     return render(request, "CFO/ChartOfAccounts.html", {'Account':Account}) 
 
-# def JournalEntry(request):
-#     Account = COA.objects.order_by('concatenated_id')
-#     if request.method == "POST":
-#         debit = request.POST['debit']
-#     return render(request, "CFO/JournalEntry.html", {'Account':Account}) 
 
-class JournalEntry(View):
-    def get(self, request):
-        accounts = COA.objects.all()
-        # Render the form template
-        return render(request, 'CFO/JournalEntry.html',{'Account':accounts})
+def EditAccount(request,pk):
+    AccDetails = COA.objects.get(pk=pk)
+    
+    if(request.method == "POST"):
+        AccCatVal = request.POST['AccCat'] #Values are '1' for Asset, '2' for Liability, and so on. AccCatVal is short for Account Category Value
+        SubID = request.POST['SubID']
+        AccCat = SuperCOA.objects.get(pk=AccCatVal).SuperID_Name
+        AccName = request.POST['AccName']
+        To_Increase = request.POST['To_Increase']
+        AccDescription = request.POST['AccDescription']
 
-    def post(self, request):
-        accounts = COA.objects.all()
-        # Retrieve the JSON data from the form submission
-        transactions_json = request.POST.get('transactions')
+        if SubID == "" or AccCat == "" or AccName == "" or To_Increase == "" or AccDescription == "" :
+            messages.warning(request,"One or more fields are empty!")
+            return redirect("EditAccount", pk=pk) 
+        else:
+            COA.objects.filter(pk=pk).update(SubID = SubID, AccountCategory = AccCat, AccountName=AccName, To_Increase=To_Increase, AccountDescription=AccDescription)
+            messages.success(request, 'Account Updated!')
+            
+            return redirect('ChartOfAccounts')
 
-        if transactions_json:
-            # Parse the JSON data into a Python list of dictionaries
-            transactions = json.loads(transactions_json)
+    else:
+        return render(request, 'CFO/EditAccount.html', {'acc':AccDetails}) 
 
-            # Process and save the transactions
-            for transaction_data in transactions:
-                account = transaction_data.get('account')
-                amount = transaction_data.get('amount')
-                category = transaction_data.get('category')
-
-                # Create a new Transaction instance and save it
-                transaction = Transaction(JournalID=account, TransactionAmount=amount, TransactionCategory=category)
-                transaction.save()
-
-        # Redirect to a success page or render a response as needed
-        return render(request, 'CFO/JournalEntry.html',{'Account':accounts})
-
-def get_accounts(request):
-    accounts = Account.objects.all()
-
-    # Serialize the account data to JSON format
-    serialized_accounts = [
-        {
-            'pk': account.pk,
-            'AccountName': account.AccountName
-        }
-        for account in accounts
-    ]
-
-    return JsonResponse(serialized_accounts, safe=False)
+def DeleteAccount(request, pk):
+    item.objects.filter(pk=pk).delete()
+    messages.warning(request,"Item Deleted!")
+    return redirect('ChartOfAccounts')
