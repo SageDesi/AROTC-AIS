@@ -1,0 +1,208 @@
+{% extends 'CFO/Index.html' %}
+{% load static %}
+
+{% block title %}
+<title>Journal Entry</title>
+{% endblock %}
+
+{% block content %}
+<hr>
+<button onclick="addDebitedAccount()" type="submit">Add Debited Account</button>
+<button onclick="addCreditedAccount()" type="submit">Add Credited Account</button>
+<!-- /* --------------------------------Input Accounts --------------------------------*/ -->
+<form method="POST" action="">
+{% csrf_token %}
+<table>
+    <thead>
+        <tr>
+            <th>Delete</th>
+            <th>Accounts</th>
+            <th>Debit</th>
+            <th>Credit</th>
+            <th>Description</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td></td>
+            <td>
+                <select name="debit" id="" class="account-select">
+                    {% for x in Account %}
+                    <option value="">{{x.AccountName}}</option>
+                    {% endfor %}
+                </select>
+            </td>
+            <td><input type="text"></td>
+            <td>&nbsp;</td>
+            <td rowspan="10"><textarea name="" id="descriptionTextarea" cols="50" rows="8"></textarea></td>
+        </tr>
+        <tr>
+            <td></td>
+            <td>
+                <select name="credit" id="" class="account-select">
+                    {% for x in Account %}
+                    <option value="">{{x.AccountName}}</option>
+                    {% endfor %}
+                </select>
+            </td>
+            <td></td>
+            <td><input type="text"></td>
+            <td></td>
+        </tr>
+        <tr>
+            
+        </tr>
+        <tr>
+            
+        </tr>
+    </tbody>
+</table>
+<br>
+<button type="submit">Add Transaction</button>
+<hr>
+</form>
+<!-- /* --------------------------------Input Accounts --------------------------------*/ -->
+
+
+
+<!-- /* --------------------------------Journal Entries Display --------------------------------*/ -->
+<table>
+    <thead>
+        <th>Journal ID</th>
+        <th>Date</th>
+        <th>General Journal</th>
+        <th>Debit</th>
+        <th>Credit</th>
+    </thead>
+
+    <tbody>
+        <!-- {% for x in Account %}
+        <td>{{x.concatenated_id}}</td>
+        <td>{{x.AccountName}}</td>
+        <td>{{x.To_Increase}}</td>
+        <td>{{x.AccountCategory}}</td>
+        <td>{{x.AccountDescription}}</td>
+        {% endfor %} -->
+    </tbody>
+</table>
+<!-- /* --------------------------------Journal Entries Display --------------------------------*/ -->
+<script>
+    // function addAccountRow() {
+    //     var tableBody = document.querySelector("tbody");
+    //     var accountRow = tableBody.children[0];
+
+    //     var newRow = document.createElement("tr");
+    //     newRow.innerHTML = accountRow.innerHTML;
+
+    //     var accountSelects = newRow.querySelectorAll(".account-select");
+    //     for (var i = 0; i < accountSelects.length; i++) {
+    //         var accountsSelect = document.createElement("select");
+    //         accountsSelect.innerHTML = `{% for x in Account %}<option value="{{ x.AccountName }}">{{ x.AccountName }}</option>{% endfor %}`;
+    //         accountSelects[i].parentNode.replaceChild(accountsSelect, accountSelects[i]);
+    //     }
+
+    //     tableBody.appendChild(newRow);
+    // }
+
+    // document.querySelector("button[type='submit']").addEventListener("click", function(e) {
+    //     e.preventDefault();
+    //     addAccountRow();
+    //     document.querySelector("form").submit();
+    // });
+
+    // document.querySelector("button[type='submit']").addEventListener("click", function(e) {
+    //     e.preventDefault();
+    //     addAccountRow();
+    //     document.querySelector("form").submit();
+    // });
+    function removeRow(button) {
+        var row = button.parentNode.parentNode;
+        row.parentNode.removeChild(row);
+    }
+
+    function addDebitedAccount() {
+        // Check if there are any credited accounts present
+        var creditedAccounts = document.querySelectorAll("tbody tr:not(:first-child)");
+
+        var tableBody = document.querySelector("tbody");
+        var newRow = document.createElement("tr");
+
+        var deleteCell = document.createElement("td");
+        var deleteButton = document.createElement("button");
+        deleteButton.innerText = "Delete";
+        deleteButton.onclick = function() {
+            removeRow(this);
+        };
+        deleteCell.appendChild(deleteButton);
+        newRow.appendChild(deleteCell);
+
+        var accountsCell = document.createElement("td");
+        var accountsSelect = document.createElement("select");
+        accountsSelect.innerHTML = `{% for x in Account %}<option value="{{ x.AccountName }}">{{ x.AccountName }}</option>{% endfor %}`;
+        accountsCell.appendChild(accountsSelect);
+        newRow.appendChild(accountsCell);
+
+        var debitCell = document.createElement("td");
+        var debitInput = document.createElement("input");
+        debitInput.setAttribute("type", "text");
+        debitCell.appendChild(debitInput);
+        newRow.appendChild(debitCell);
+
+        var creditCell = document.createElement("td");
+        creditCell.innerHTML = "&nbsp;";
+        newRow.appendChild(creditCell);
+
+        tableBody.appendChild(newRow);
+
+        // If there are credited accounts, insert the new row before the first credited account
+        if (creditedAccounts.length > 0) {
+            tableBody.insertBefore(newRow, creditedAccounts[0]);
+        } else {
+            // If there are no credited accounts, append the new row to the table body
+            tableBody.appendChild(newRow);
+        }
+    }
+
+    function addCreditedAccount() {
+        var tableBody = document.querySelector("tbody");
+        var newRow = document.createElement("tr");
+
+        var deleteCell = document.createElement("td");
+        var deleteButton = document.createElement("button");
+        deleteButton.innerText = "Delete";
+        deleteButton.onclick = function() {
+            removeRow(this);
+        };
+        deleteCell.appendChild(deleteButton);
+        newRow.appendChild(deleteCell);
+
+        var accountsCell = document.createElement("td");
+        var accountsSelect = document.createElement("select");
+        accountsSelect.innerHTML = `{% for x in Account %}<option value="{{ x.AccountName }}">{{ x.AccountName }}</option>{% endfor %}`;
+        accountsCell.appendChild(accountsSelect);
+        newRow.appendChild(accountsCell);
+
+        var debitCell = document.createElement("td");
+        debitCell.innerHTML = "&nbsp;";
+        newRow.appendChild(debitCell);
+
+        var creditCell = document.createElement("td");
+        var creditInput = document.createElement("input");
+        creditInput.setAttribute("type", "text");
+        creditCell.appendChild(creditInput);
+        newRow.appendChild(creditCell);
+
+        tableBody.appendChild(newRow);
+    }
+
+    function undoLastAccount() {
+        var tableBody = document.querySelector("tbody");
+        var lastRow = tableBody.lastElementChild;
+        if (lastRow) {
+            tableBody.removeChild(lastRow);
+        }
+    }
+</script>   
+
+
+{% endblock %}

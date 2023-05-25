@@ -8,21 +8,35 @@
 {% block content %}
 <hr>
 <!-- /* --------------------------------Input Accounts --------------------------------*/ -->
+<h1>Input New Account</h1>
 <form method="POST" action="">
+{% csrf_token %}
 <table>
     <tbody>
         <tr>
+            <td>SubID:</td>
+            <td><input name="SubID" type="text"></td>
+        </tr>
+        <tr>
             <td>Account Category:</td>
-            <td><input type="text"></td>
+            <td>
+                <select name="AccCat" id="AccCat">
+                    <option value="1">Asset</option>
+                    <option value="2">Liability</option>
+                    <option value="3">Equity</option>
+                    <option value="4">Revenue</option>
+                    <option value="5">Expense</option>
+                </select>
+            </td>
         </tr>
         <tr>
             <td>Account Name:</td>
-            <td><input type="text"></td>
+            <td><input name="AccName" type="text"></td>
         </tr>
         <tr>
             <td>To-Increase:</td>
             <td>
-                <select name="To_Increase" id="To_Increase">
+                <select name="To_Increase">
                     <option value="Debit">Debit</option>
                     <option value="Credit">Credit</option>
                 </select>
@@ -35,7 +49,7 @@
     </tbody>
 </table>
 <br>
-<button>Add Account</button>
+<button type="submit">Add Account</button>
 <hr>
 </form>
 <!-- /* --------------------------------Input Accounts --------------------------------*/ -->
@@ -43,9 +57,10 @@
 
 
 <!-- /* --------------------------------Chart of Accounts Display --------------------------------*/ -->
+<h1>Accounts</h1>
 <table>
     <thead>
-        <th>Number</th>
+        <th>COA ID</th>
         <th>Account Name</th>
         <th>To-Increase</th>
         <th>Account Category</th>
@@ -53,7 +68,15 @@
     </thead>
 
     <tbody>
-
+        {% for x in Account %}
+        <tr>
+            <td>{{x.concatenated_id}}</td>
+            <td>{{x.AccountName}}</td>
+            <td>{{x.To_Increase}}</td>
+            <td>{{x.AccountCategory}}</td>
+            <td>{{x.AccountDescription}}</td>
+        </tr>
+        {% endfor %}
     </tbody>
 </table>
 <!-- /* --------------------------------Chart of Accounts Display --------------------------------*/ -->
