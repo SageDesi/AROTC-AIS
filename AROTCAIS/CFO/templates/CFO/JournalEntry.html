@@ -17,13 +17,17 @@
             <tr>
                 <th>Delete</th>
                 <th>Accounts</th>
-                <th>Debit</th>
-                <th>Credit</th>
+                <th>Dr. Amount</th>
+                <th>Cr. Amount</th>
                 <th>Description</th>
             </tr>
         </thead>
-        <tbody id="accountRows">
-            <!-- Account rows will be dynamically added here -->
+        <tbody>
+            <tr id="DebitRows">
+            </tr>
+            <tr><td colspan="6"><hr class="dashed-line"></td></tr>
+            <tr id="CreditRows">
+            </tr>
         </tbody>
     </table>
     <br>
@@ -47,8 +51,230 @@
 </table>
 <!-- /* --------------------------------Journal Entries Display --------------------------------*/ -->
 
-<script src="{% static 'js/JEscript' %}">
-    
-</script>
+<!-- <script>
+    // Global arrays for debited and credited accounts
+var debitedAccounts = [];
+var creditedAccounts = [];
+var debitAmounts = [];
+var creditAmounts = [];
+var previousDebitedAccount = null;
 
+function removeRow(button) {
+  var row = button.parentNode.parentNode;
+  var accountSelect = row.querySelector(".account-select");
+  var debitAmountInput = row.querySelector("input[name='debit_amount']");
+  var creditAmountInput = row.querySelector("input[name='credit_amount']");
+  var category = "";
+
+  // Check if the row is a debited or credited account
+  if (debitAmountInput) {
+    // Debit account
+    category = "Debit";
+    var index = debitedAccounts.indexOf(accountSelect.value);
+    if (index > -1) {
+      debitedAccounts.splice(index, 1);
+    }
+  } else if (creditAmountInput) {
+    // Credit account
+    category = "Credit";
+    var index = creditedAccounts.indexOf(accountSelect.value);
+    if (index > -1) {
+      creditedAccounts.splice(index, 1);
+    }
+  }
+
+  row.parentNode.removeChild(row);
+
+  // Debugging: Log the removed account and its category
+  console.log("Removed", category, "account:", accountSelect.value);
+}
+
+function addDebitedAccount() {
+  var tableBody = document.getElementById("DebitRows");
+  var newRow = document.createElement("tr");
+
+  var deleteCell = document.createElement("td");
+  var deleteButton = document.createElement("button");
+  deleteButton.innerText = "Delete";
+  deleteButton.addEventListener("click", function() {
+    removeRow(this);
+  });
+  deleteCell.appendChild(deleteButton);
+  newRow.appendChild(deleteCell);
+
+  var accountsCell = document.createElement("td");
+  var accountsSelect = document.createElement("select");
+  accountsSelect.classList.add("account-select");
+  accountsSelect.innerHTML = `<option value="" disabled selected>Select an Account to Debit</option>{% for x in Account %}<option value="{{x.pk}}">{{ x.AccountName }}</option>{% endfor %}`;
+  accountsCell.appendChild(accountsSelect);
+  newRow.appendChild(accountsCell);
+
+  var debitCell = document.createElement("td");
+  var debitInput = document.createElement("input");
+  debitInput.setAttribute("type", "text");
+  debitInput.classList.add("debit-amount");
+  debitCell.appendChild(debitInput);
+  newRow.appendChild(debitCell);
+
+  var creditCell = document.createElement("td");
+  creditCell.innerHTML = "&nbsp;";
+  newRow.appendChild(creditCell);
+
+  tableBody.appendChild(newRow);
+
+  // Add event listener to account select element
+  accountsSelect.addEventListener("change", function(event) {
+    var selectedAccount = event.target.value;
+    var rowIndex = Array.from(tableBody.children).indexOf(event.target.parentNode.parentNode);
+    debitedAccounts[rowIndex] = selectedAccount;
+    console.log("Debited Accounts:", debitedAccounts);
+  });
+
+  // Add event listener to debit input element
+  debitInput.addEventListener("input", function(event) {
+    var debitAmount = event.target.value;
+    var rowIndex = Array.from(tableBody.children).indexOf(event.target.parentNode.parentNode);
+    debitAmounts[rowIndex] = debitAmount;
+
+    if (debitAmount === "" && creditAmounts[rowIndex] === undefined) {
+      delete creditAmounts[rowIndex];
+    }
+
+    debitAmounts = debitAmounts.filter(function(amount) {
+      return amount !== undefined;
+    });
+    creditAmounts = creditAmounts.filter(function(amount) {
+      return amount !== undefined;
+    });
+
+    console.log("Debit amounts:", debitAmounts);
+    console.log("Credit amounts:", creditAmounts);
+  });
+
+  // Set the selected account of the new row based on the previous debited account
+  if (previousDebitedAccount !== null) {
+    accountsSelect.value = previousDebitedAccount;
+    debitedAccounts.push(previousDebitedAccount);
+  }
+
+  // Update the previous debited account
+  previousDebitedAccount = accountsSelect.value;
+}
+
+function addCreditedAccount() {
+  var tableBody = document.getElementById("CreditRows");
+  var newRow = document.createElement("tr");
+
+  var deleteCell = document.createElement("td");
+  var deleteButton = document.createElement("button");
+  deleteButton.innerText = "Delete";
+  deleteButton.addEventListener("click", function() {
+    removeRow(this);
+  });
+  deleteCell.appendChild(deleteButton);
+  newRow.appendChild(deleteCell);
+
+  var accountsCell = document.createElement("td");
+  var accountsSelect = document.createElement("select");
+  accountsSelect.classList.add("account-select");
+  accountsSelect.innerHTML = `<option value="" disabled selected>Select an Account to Credit</option>{% for x in Account %}<option value="{{x.pk}}">{{ x.AccountName }}</option>{% endfor %}`;
+  accountsCell.appendChild(accountsSelect);
+  newRow.appendChild(accountsCell);
+
+  var debitCell = document.createElement("td");
+  debitCell.innerHTML = "&nbsp;";
+  newRow.appendChild(debitCell);
+
+  var creditCell = document.createElement("td");
+  var creditInput = document.createElement("input");
+  creditInput.setAttribute("type", "text");
+  creditInput.classList.add("credit-amount");
+  creditCell.appendChild(creditInput);
+  newRow.appendChild(creditCell);
+
+  tableBody.appendChild(newRow);
+
+  // Add event listener to account select element
+  accountsSelect.addEventListener("change", function(event) {
+    var selectedAccount = event.target.value;
+    var rowIndex = Array.from(tableBody.children).indexOf(event.target.parentNode.parentNode);
+    creditedAccounts[rowIndex] = selectedAccount;
+    console.log("Credited Accounts:", creditedAccounts);
+  });
+
+  // Add event listener to credit input element
+  creditInput.addEventListener("input", function(event) {
+    var creditAmount = event.target.value;
+    var rowIndex = Array.from(tableBody.children).indexOf(event.target.parentNode.parentNode);
+
+    if (creditAmount !== "") {
+      creditAmounts[rowIndex] = creditAmount;
+    } else {
+      delete creditAmounts[rowIndex];
+    }
+
+    creditAmounts = creditAmounts.filter(function(amount) {
+      return amount !== undefined;
+    });
+
+    console.log("Credit amounts:", creditAmounts);
+  });
+}
+
+
+document.getElementById("addDebitedAccountBtn").addEventListener("click", addDebitedAccount);
+document.getElementById("addCreditedAccountBtn").addEventListener("click", addCreditedAccount);
+</script> -->
+
+<script>
+    // Function to create a new row
+// Function to create a new row
+function createRow() {
+  var row = document.createElement("tr");
+  var deleteCell = document.createElement("td");
+  var accountsCell = document.createElement("td");
+  var drAmountCell = document.createElement("td");
+  var crAmountCell = document.createElement("td");
+  var descriptionCell = document.createElement("td");
+
+  // Set the content of the cells to 'test'
+  accountsCell.textContent = 'test';
+  drAmountCell.textContent = 'test';
+  crAmountCell.textContent = 'test';
+  descriptionCell.textContent = 'test';
+  
+  // Append cells to the row
+  row.appendChild(deleteCell);
+  row.appendChild(accountsCell);
+  row.appendChild(drAmountCell);
+  row.appendChild(crAmountCell);
+  row.appendChild(descriptionCell);
+  
+  return row;
+}
+
+
+// Function to add a debited account row
+function addDebitedAccountRow() {
+  var debitRows = document.getElementById("DebitRows");
+  var newRow = createRow();
+  debitRows.appendChild(newRow);
+}
+
+// Function to add a credited account row
+function addCreditedAccountRow() {
+  var creditRows = document.getElementById("CreditRows");
+  var newRow = createRow();
+  creditRows.appendChild(newRow);
+}
+
+// Event listener for adding debited account row
+var addDebitedAccountBtn = document.getElementById("addDebitedAccountBtn");
+addDebitedAccountBtn.addEventListener("click", addDebitedAccountRow);
+
+// Event listener for adding credited account row
+var addCreditedAccountBtn = document.getElementById("addCreditedAccountBtn");
+addCreditedAccountBtn.addEventListener("click", addCreditedAccountRow);
+
+</script>
 {% endblock %}
