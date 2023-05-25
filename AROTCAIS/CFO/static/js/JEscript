@@ -1,0 +1,167 @@
+function removeRow(button) {
+    var row = button.parentNode.parentNode;
+    row.parentNode.removeChild(row);
+}
+
+function addDebitedAccount() {
+    // Check if there are any credited accounts present
+    var creditedAccounts = document.querySelectorAll("tbody tr:not(:first-child)");
+
+    var tableBody = document.getElementById("accountRows");
+    var newRow = document.createElement("tr");
+
+    var deleteCell = document.createElement("td");
+    var deleteButton = document.createElement("button");
+    deleteButton.innerText = "Delete";
+    deleteButton.addEventListener("click", function() {
+        removeRow(this);
+    });
+    deleteCell.appendChild(deleteButton);
+    newRow.appendChild(deleteCell);
+
+    var accountsCell = document.createElement("td");
+    var accountsSelect = document.createElement("select");
+    accountsSelect.classList.add("account-select");
+    accountsSelect.innerHTML = `{% for x in Account %}<option value="{{x.pk}}">{{ x.AccountName }}</option>{% endfor %}`;
+    accountsCell.appendChild(accountsSelect);
+    newRow.appendChild(accountsCell);
+
+    var debitCell = document.createElement("td");
+    var debitInput = document.createElement("input");
+    debitInput.setAttribute("type", "text");
+    debitInput.setAttribute("name", "debit_amount");
+    debitCell.appendChild(debitInput);
+    newRow.appendChild(debitCell);
+
+    var creditCell = document.createElement("td");
+    creditCell.innerHTML = "&nbsp;";
+    newRow.appendChild(creditCell);
+
+    tableBody.appendChild(newRow);
+
+    // If there are credited accounts, insert the new row before the first credited account
+    if (creditedAccounts.length > 0) {
+        tableBody.insertBefore(newRow, creditedAccounts[0]);
+    } else {
+        // If there are no credited accounts, append the new row to the table body
+        tableBody.appendChild(newRow);
+    }
+    // Add event listener to account select element
+    accountsSelect.addEventListener("change", function(event) {
+        var selectedAccount = event.target.value;
+        console.log("Selected account:", selectedAccount);
+    });
+
+    // Add event listener to debit input element
+    debitInput.addEventListener("input", function(event) {
+        var debitAmount = event.target.value;
+        console.log("Debit amount:", debitAmount);
+    });
+}
+
+function addCreditedAccount() {
+    var tableBody = document.getElementById("accountRows");
+    var newRow = document.createElement("tr");
+
+    var deleteCell = document.createElement("td");
+    var deleteButton = document.createElement("button");
+    deleteButton.innerText = "Delete";
+    deleteButton.addEventListener("click", function() {
+        removeRow(this);
+    });
+    deleteCell.appendChild(deleteButton);
+    newRow.appendChild(deleteCell);
+
+    var accountsCell = document.createElement("td");
+    var accountsSelect = document.createElement("select");
+    accountsSelect.classList.add("account-select");
+    accountsSelect.innerHTML = `{% for x in Account %}<option value="{{x.pk}}">{{ x.AccountName }}</option>{% endfor %}`;
+    accountsCell.appendChild(accountsSelect);
+    newRow.appendChild(accountsCell);
+
+    var debitCell = document.createElement("td");
+    debitCell.innerHTML = "&nbsp;";
+    newRow.appendChild(debitCell);
+
+    var creditCell = document.createElement("td");
+    var creditInput = document.createElement("input");
+    creditInput.setAttribute("type", "text");
+    creditInput.setAttribute("name", "credit_amount");
+    creditCell.appendChild(creditInput);
+    newRow.appendChild(creditCell);
+
+    tableBody.appendChild(newRow);
+
+    // Add event listener to account select element
+    accountsSelect.addEventListener("change", function(event) {
+        var selectedAccount = event.target.value;
+        console.log("Selected account:", selectedAccount);
+    });
+
+    // Add event listener to credit input element
+    creditInput.addEventListener("input", function(event) {
+        var creditAmount = event.target.value;
+        console.log("Credit amount:", creditAmount);
+    });
+}
+
+function submitForm() {
+    var form = document.querySelector("form");
+    var accountSelects = document.querySelectorAll(".account-select");
+    var debitAmounts = document.getElementsByName("debit_amount");
+    var creditAmounts = document.getElementsByName("credit_amount");
+    console.log(accountSelects);
+
+    // Create an array to hold the transaction data
+    var transactions = [];
+
+    // Loop through each account select field and collect the corresponding debit and credit amounts
+    for (var i = 0; i < accountSelects.length; i++) {
+        var accountSelect = accountSelects[i];
+        var debitAmount = debitAmounts[i].value;
+        var creditAmount = creditAmounts[i].value;
+        var transactionCategory = "";
+
+        // Check if the debit amount is present and the credit amount is empty or vice versa
+        if (debitAmount !== "" && creditAmount === "") {
+            // Debit transaction
+            transactionCategory = "Debit";
+        } else if (debitAmount === "" && creditAmount !== "") {
+            // Credit transaction
+            transactionCategory = "Credit";
+        }
+
+        // Create a transaction object with the selected account, amount, and transaction category
+        var transaction = {
+            account: accountSelect.value,
+            amount: debitAmount || creditAmount,
+            category: transactionCategory
+        };
+
+        // Add the transaction object to the transactions array
+        transactions.push(transaction);
+
+        // Debugging: Log the transaction object for each iteration
+        console.log("Transaction " + (i + 1) + ":", transaction);
+    }
+
+    // Convert the transactions array to a JSON string
+    var jsonData = JSON.stringify(transactions);
+
+    // Add a hidden input field to the form to hold the JSON data
+    var jsonDataInput = document.createElement("input");
+    jsonDataInput.setAttribute("type", "hidden");
+    jsonDataInput.setAttribute("name", "transactions");
+    jsonDataInput.value = jsonData;
+    form.appendChild(jsonDataInput);
+
+    // Debugging: Log the JSON data before submitting the form
+    console.log("JSON Data:", jsonData);
+
+    // Submit the form
+    form.submit();
+}
+
+// Add event listeners to the buttons
+document.getElementById("addDebitedAccountBtn").addEventListener("click", addDebitedAccount);
+document.getElementById("addCreditedAccountBtn").addEventListener("click", addCreditedAccount);

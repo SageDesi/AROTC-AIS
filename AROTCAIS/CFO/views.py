@@ -13,6 +13,8 @@ from django.contrib.auth import login
 from django.views import View
 from django.shortcuts import redirect
 from django.db import transaction
+from django.http import JsonResponse    
+import json
 
 # from .models import Task
 from .forms import PositionForm
@@ -59,6 +61,50 @@ def ChartOfAccounts(request):
         Acc.save()
     return render(request, "CFO/ChartOfAccounts.html", {'Account':Account}) 
 
-def JournalEntry(request):
-    Account = COA.objects.order_by('concatenated_id')
-    return render(request, "CFO/JournalEntry.html", {'Account':Account}) 
+# def JournalEntry(request):
+#     Account = COA.objects.order_by('concatenated_id')
+#     if request.method == "POST":
+#         debit = request.POST['debit']
+#     return render(request, "CFO/JournalEntry.html", {'Account':Account}) 
+
+class JournalEntry(View):
+    def get(self, request):
+        accounts = COA.objects.all()
+        # Render the form template
+        return render(request, 'CFO/JournalEntry.html',{'Account':accounts})
+
+    def post(self, request):
+        accounts = COA.objects.all()
+        # Retrieve the JSON data from the form submission
+        transactions_json = request.POST.get('transactions')
+
+        if transactions_json:
+            # Parse the JSON data into a Python list of dictionaries
+            transactions = json.loads(transactions_json)
+
+            # Process and save the transactions
+            for transaction_data in transactions:
+                account = transaction_data.get('account')
+                amount = transaction_data.get('amount')
+                category = transaction_data.get('category')
+
+                # Create a new Transaction instance and save it
+                transaction = Transaction(JournalID=account, TransactionAmount=amount, TransactionCategory=category)
+                transaction.save()
+
+        # Redirect to a success page or render a response as needed
+        return render(request, 'CFO/JournalEntry.html',{'Account':accounts})
+
+def get_accounts(request):
+    accounts = Account.objects.all()
+
+    # Serialize the account data to JSON format
+    serialized_accounts = [
+        {
+            'pk': account.pk,
+            'AccountName': account.AccountName
+        }
+        for account in accounts
+    ]
+
+    return JsonResponse(serialized_accounts, safe=False)
