@@ -1,4 +1,4 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.views.generic.list import ListView
 from django.views.generic.detail import DetailView
 from django.views.generic.edit import CreateView, UpdateView, DeleteView, FormView
@@ -18,7 +18,7 @@ from django.db import transaction
 from .forms import PositionForm
 
 from .models import *
-
+from .models import COA
 
 class CustomLoginView(LoginView):
     template_name = 'CFO/login.html'
@@ -61,4 +61,32 @@ def ChartOfAccounts(request):
 
 def JournalEntry(request):
     Account = COA.objects.order_by('concatenated_id')
-    return render(request, "CFO/JournalEntry.html", {'Account':Account}) 
+    return render(request, "CFO/JournalEntry.html", {'Account':Account})
+
+def EditAccount(request,pk):
+    AccDetails = COA.objects.get(pk=pk)
+    
+    if(request.method == "POST"):
+        AccCatVal = request.POST['AccCat'] #Values are '1' for Asset, '2' for Liability, and so on. AccCatVal is short for Account Category Value
+        SubID = request.POST['SubID']
+        # AccCat = SuperCOA.objects.get(pk=AccCatVal).SuperID_Name
+        AccName = request.POST['AccName']
+        To_Increase = request.POST['To_Increase']
+        AccDescription = request.POST['AccDescription']
+
+        if SubID == "" or AccCat == "" or AccName == "" or To_Increase == "" or AccDescription == "" :
+            messages.warning(request,"One or more fields are empty!")
+            return redirect("EditAccount", pk=pk) 
+        else:
+            COA.objects.filter(pk=pk).update(SubID = SubID, AccountCategory = AccCat, AccountName=AccName, To_Increase=To_Increase, AccountDescription=AccDescription)
+            messages.success(request, 'Account Updated!')
+            
+            return redirect('ChartOfAccounts')
+
+    else:
+        return render(request, 'CFO/EditAccount.html', {'acc':AccDetails}) 
+
+def DeleteAccount(request, pk):
+    item.objects.filter(pk=pk).delete()
+    messages.warning(request,"Item Deleted!")
+    return redirect('ChartOfAccounts')
