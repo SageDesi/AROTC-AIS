@@ -22,13 +22,18 @@
                 <th>Description</th>
             </tr>
         </thead>
-        <tbody>
+        <!-- <tbody>
             <tr id="DebitRows">
             </tr>
             <tr><td colspan="6"><hr class="dashed-line"></td></tr>
             <tr id="CreditRows">
             </tr>
+        </tbody> -->
+        <tbody id="debit">
         </tbody>
+        <tfoot id="credit">
+
+        </tfoot>
     </table>
     <br>
     <button type="submit" onclick="submitForm()">Add Transaction</button>
@@ -51,7 +56,7 @@
 </table>
 <!-- /* --------------------------------Journal Entries Display --------------------------------*/ -->
 
-<!-- <script>
+<script>
     // Global arrays for debited and credited accounts
 var debitedAccounts = [];
 var creditedAccounts = [];
@@ -90,7 +95,7 @@ function removeRow(button) {
 }
 
 function addDebitedAccount() {
-  var tableBody = document.getElementById("DebitRows");
+  var tableBody = document.getElementById("debit");
   var newRow = document.createElement("tr");
 
   var deleteCell = document.createElement("td");
@@ -162,7 +167,7 @@ function addDebitedAccount() {
 }
 
 function addCreditedAccount() {
-  var tableBody = document.getElementById("CreditRows");
+  var tableBody = document.getElementById("credit");
   var newRow = document.createElement("tr");
 
   var deleteCell = document.createElement("td");
@@ -224,9 +229,9 @@ function addCreditedAccount() {
 
 document.getElementById("addDebitedAccountBtn").addEventListener("click", addDebitedAccount);
 document.getElementById("addCreditedAccountBtn").addEventListener("click", addCreditedAccount);
-</script> -->
+</script>
 
-<script>
+<!-- <script>
     // Function to create a new row
 // Function to create a new row
 function createRow() {
@@ -276,5 +281,5 @@ addDebitedAccountBtn.addEventListener("click", addDebitedAccountRow);
 var addCreditedAccountBtn = document.getElementById("addCreditedAccountBtn");
 addCreditedAccountBtn.addEventListener("click", addCreditedAccountRow);
 
-</script>
+</script> -->
 {% endblock %}
