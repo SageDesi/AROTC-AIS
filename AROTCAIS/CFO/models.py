@@ -42,8 +42,12 @@ class JournalEntry(models.Model):
     Receipt = models.ImageField(upload_to='images/', null=True)
     objects = models.Manager()
 
-class Transaction(models.Model):
+class DebitedAccount(models.Model):
     JournalID = models.ForeignKey(JournalEntry, on_delete=models.CASCADE)
-    TransactionID = models.AutoField(primary_key=True)
-    TransactionCategory = models.CharField(max_length=15, null=False, blank=False)
-    TransactionAmount = models.DecimalField(max_digits=10, decimal_places=2)
+    DebitID = models.AutoField(primary_key=True)
+    DebitAmount = models.DecimalField(max_digits=10, decimal_places=2)
+
+class CreditedAccount(models.Model):
+    JournalID = models.ForeignKey(JournalEntry, on_delete=models.CASCADE)
+    CreditID = models.AutoField(primary_key=True)
+    CreditAmount = models.DecimalField(max_digits=10, decimal_places=2)

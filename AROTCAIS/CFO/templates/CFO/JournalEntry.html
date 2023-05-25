@@ -21,7 +21,7 @@
                 <th>Cr. Amount</th>
                 <th>Description</th>
             </tr>
-        </thead>-->
+        </thead>
         <tbody id="debit">
         </tbody>
         <tfoot id="credit">
@@ -233,10 +233,43 @@ function submitForm() {
     creditedAccountsDict[creditedAccounts[i]] = creditAmounts[i] || 0;
   }
 
-  console.log("Debited Accounts Dictionary:", debitedAccountsDict);
-  console.log("Credited Accounts Dictionary:", creditedAccountsDict);
+  var debitedAccountsJSON = JSON.stringify(debitedAccountsDict);
+  var creditedAccountsJSON = JSON.stringify(creditedAccountsDict);
+
+  console.log("Debited Accounts JSON:", debitedAccountsJSON);
+  console.log("Credited Accounts JSON:", creditedAccountsJSON);
+  // Rest of the form submission logic...
+  fetch('/JournalEntry/', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'X-CSRFToken': getCSRFToken(), // Include CSRF token if required by Django
+    },
+    body: JSON.stringify({
+      debitedAccounts: debitedAccountsJSON,
+      creditedAccounts: creditedAccountsJSON,
+    }),
+  })
+  .then(response => response.json())
+  .then(data => {
+    // Handle the response from the Django view
+    console.log(data);
+  })
+  .catch(error => {
+    // Handle any errors that occur during the request
+    console.error(error);
+  });
 
   // Rest of the form submission logic...
+}
+
+// Function to retrieve the CSRF token from the cookies
+function getCSRFToken() {
+  const cookieValue = document.cookie
+    .split('; ')
+    .find(cookie => cookie.startsWith('csrftoken='))
+    .split('=')[1];
+  return cookieValue;
 }
 document.getElementById("addDebitedAccountBtn").addEventListener("click", addDebitedAccount);
 document.getElementById("addCreditedAccountBtn").addEventListener("click", addCreditedAccount);

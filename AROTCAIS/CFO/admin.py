@@ -8,4 +8,6 @@ admin.site.register(COA)
 
 admin.site.register(JournalEntry)
 
-admin.site.register(Transaction)
+admin.site.register(DebitedAccount)
+
+admin.site.register(CreditedAccount)
