@@ -1,11 +1,4 @@
-{% extends 'CFO/Index.html' %}
-{% load static %}
-
-{% block title %}
-<title>Journal Entry</title>
-{% endblock %}
-
-{% block content %}
+{% extends 'CFO/Index.html' %}{% load static %}{% block title %}<title>Journal Entry</title>{% endblock %}{% block content %}
 <hr>
 <button id="addDebitedAccountBtn" type="button">Add Debited Account</button>
 <button id="addCreditedAccountBtn" type="button">Add Credited Account</button>
@@ -19,19 +12,37 @@
                 <th>Accounts</th>
                 <th>Dr. Amount</th>
                 <th>Cr. Amount</th>
-                <th>Description</th>
             </tr>
         </thead>
         <tbody id="debit">
         </tbody>
         <tfoot id="credit">
-
         </tfoot>
     </table>
     <br>
     <button type="submit" onclick="submitForm()">Add Transaction</button>
     <input type="hidden" id="debitJSON" name="debitJSON">
     <input type="hidden" id="creditJSON" name="creditJSON">
+    <table>
+      <thead>
+        <th>Description</th>
+      </thead>
+      <tbody>
+        <tr>
+          <td><textarea name="" id="" cols="100" rows="2"></textarea></td>
+        </tr>
+      </tbody>
+    </table>
+    <table>
+      <thead>
+        <th>Image Receipt</th>
+      </thead>
+      <tbody>
+        <tr>
+          <td><input type="image"></td>
+        </tr>
+      </tbody>
+    </table>
 </form>
 <hr>
 <!-- /* --------------------------------Journal Entries Display --------------------------------*/ -->
@@ -254,5 +265,9 @@ function submitForm() {
 
 document.getElementById("addDebitedAccountBtn").addEventListener("click", addDebitedAccount);
 document.getElementById("addCreditedAccountBtn").addEventListener("click", addCreditedAccount);
+window.addEventListener("load", function() {
+  addDebitedAccount();
+  addCreditedAccount();
+});
 </script>
 {% endblock %}
