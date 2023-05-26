@@ -44,14 +44,21 @@ class JournalEntry(models.Model):
 
 class DebitedAccount(models.Model):
     # JournalID = models.ForeignKey(JournalEntry, on_delete=models.CASCADE)
-    COA_ID = models.CharField(max_length=500, null=True, blank=True)
+    COA_ID = models.ForeignKey(COA, on_delete=models.CASCADE)
     DebitID = models.AutoField(primary_key=True)
     DebitAmount = models.DecimalField(max_digits=10, decimal_places=2)
     objects = models.Manager()
 
+    def __str__(self):
+        return "Account: " + str(self.COA_ID) + " | Debited Amount: " + str(self.DebitAmount)
+
+
 class CreditedAccount(models.Model):
     # JournalID = models.ForeignKey(JournalEntry, on_delete=models.CASCADE)
-    COA_ID = models.CharField(max_length=500, null=True, blank=True)
+    COA_ID = models.ForeignKey(COA, on_delete=models.CASCADE)
     CreditID = models.AutoField(primary_key=True)
     CreditAmount = models.DecimalField(max_digits=10, decimal_places=2)
     objects = models.Manager()
+
+    def __str__(self):
+        return "Account: " + str(self.COA_ID) + " | Credited Amount: " + str(self.CreditAmount)

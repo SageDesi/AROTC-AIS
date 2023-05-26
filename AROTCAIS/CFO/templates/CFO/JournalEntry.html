@@ -29,7 +29,9 @@
         </tfoot>
     </table>
     <br>
-    <button type="button" onclick="submitForm()">Add Transaction</button>
+    <button type="submit" onclick="submitForm()">Add Transaction</button>
+    <input type="hidden" id="debitJSON" name="debitJSON">
+    <input type="hidden" id="creditJSON" name="creditJSON">
 </form>
 <hr>
 <!-- /* --------------------------------Journal Entries Display --------------------------------*/ -->
@@ -220,14 +222,6 @@ function addCreditedAccount() {
     console.log("Credit amounts:", creditAmounts);
   });
 }
-// Function to retrieve the CSRF token from the cookies
-function getCSRFToken() {
-  const cookieValue = document.cookie
-    .split('; ')
-    .find(cookie => cookie.startsWith('csrftoken='))
-    .split('=')[1];
-  return cookieValue;
-}
 
 function submitForm() {
   var debitedAccountsDict = {};
@@ -246,44 +240,17 @@ function submitForm() {
   console.log("Debited Accounts:", debitedAccountsDict);
   console.log("Credited Accounts:", creditedAccountsDict);
 
-  // Create a new XMLHttpRequest object
-  var xhr = new XMLHttpRequest();
-
-  // Specify the HTTP method and URL
-  var method = 'POST';
-  var url = '/addJournalEntry/';
-  xhr.open(method, url, true);
-
-  // Set the request headers
-  xhr.setRequestHeader('Content-Type', 'application/json');
-  xhr.setRequestHeader('X-CSRFToken', getCSRFToken());
-
-  // Set up a callback function to handle the response
-  xhr.onload = function() {
-    if (xhr.status === 200) {
-      // Request succeeded, handle the response here
-      var response = JSON.parse(xhr.responseText);
-      console.log(response);
-    } else {
-      // Request failed, handle the error here
-      console.error('Request failed. Status:', xhr.status);
-    }
-  };
-
-  // Convert the JSON data to a string
   var jsonData = JSON.stringify({
     debitedAccounts: debitedAccountsDict,
     creditedAccounts: creditedAccountsDict,
   });
-
-  // Send the request with the JSON data
-  console.log(jsonData)
-  xhr.send(jsonData);
-
-  // Rest of the form submission logic...
+  document.getElementById('debitJSON').value = JSON.stringify({
+    debitedAccounts: debitedAccountsDict
+  });
+  document.getElementById('creditJSON').value = JSON.stringify({
+    creditedAccounts: creditedAccountsDict
+  });
 }
-
-
 
 document.getElementById("addDebitedAccountBtn").addEventListener("click", addDebitedAccount);
 document.getElementById("addCreditedAccountBtn").addEventListener("click", addCreditedAccount);

@@ -17,6 +17,7 @@ from django.db import transaction
 import xml.etree.ElementTree as ET
 from django.http import HttpResponseBadRequest, JsonResponse
 import json
+from django.views.decorators.csrf import csrf_protect
 
 # from .models import Task
 from .forms import PositionForm
@@ -68,50 +69,32 @@ def JournalEntry(request):
     # Render the form template with accounts data
     return render(request, 'CFO/JournalEntry.html', {'Account': accounts})
 
+@csrf_protect
 def addJournalEntry(request):
+    accounts = COA.objects.all()
     if request.method == "POST":
-        content_type = request.META.get('CONTENT_TYPE')
-
-        if content_type == 'application/json':
-            # Handle JSON request
-            json_data = json.loads(request.body)
-            debited_accounts = json_data.get('debitedAccounts')
-            credited_accounts = json_data.get('creditedAccounts')
-        elif content_type == 'application/xml':
-            # Handle XML request
-            xml_data = request.body
-            xml_root = ET.fromstring(xml_data)
-            debited_accounts = {}
-            credited_accounts = {}
-
-            for account_element in xml_root.iter('account'):
-                account_id = account_element.get('id')
-                amount = float(account_element.text or 0)
-
-                if account_element.get('type') == 'debited':
-                    debited_accounts[account_id] = amount
-                elif account_element.get('type') == 'credited':
-                    credited_accounts[account_id] = amount
-                else:
-                    return HttpResponseBadRequest("Invalid XML data")
-
-        else:
-            return HttpResponseBadRequest("Unsupported content type")
-
-        if debited_accounts and credited_accounts:
-            # Rest of your code for saving the journal entry
-
-            # Return a JSON response to indicate success
-            response_data = {'message': 'Data saved successfully'}
-            return JsonResponse(response_data)
-        else:
-            # Return a JSON response to indicate an error
-            response_data = {'message': 'Invalid data'}
-            return JsonResponse(response_data, status=400)
-
-    else:
-        return HttpResponseBadRequest("Invalid request method")
-
+        debited_accounts_json = request.POST.get('debitJSON')
+        credited_accounts_json = request.POST.get('creditJSON')
+        
+        debited_accounts = json.loads(debited_accounts_json)
+        credited_accounts = json.loads(credited_accounts_json)
+        
+        # Printing debited accounts
+        for account, amount in debited_accounts['debitedAccounts'].items():
+            print("Debited Account:", account)
+            print("Amount:", amount)
+            coa = COA.objects.get(concatenated_id=account)
+            DebitedAccount(COA_ID=coa,DebitAmount=amount).save()
+        
+        # Printing credited accounts
+        for account, amount in credited_accounts['creditedAccounts'].items():
+            print("Credited Account:", account)
+            print("Amount:", amount)
+            coa = COA.objects.get(concatenated_id=account)
+            CreditedAccount(COA_ID=coa, CreditAmount=amount).save()
+        
+    return render(request, 'CFO/JournalEntry.html', {'Account': accounts})
+    
 def EditAccount(request,pk):
     AccDetails = COA.objects.get(pk=pk)
     
