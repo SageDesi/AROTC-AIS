@@ -43,11 +43,15 @@ class JournalEntry(models.Model):
     objects = models.Manager()
 
 class DebitedAccount(models.Model):
-    JournalID = models.ForeignKey(JournalEntry, on_delete=models.CASCADE)
+    # JournalID = models.ForeignKey(JournalEntry, on_delete=models.CASCADE)
+    COA_ID = models.CharField(max_length=500, null=True, blank=True)
     DebitID = models.AutoField(primary_key=True)
     DebitAmount = models.DecimalField(max_digits=10, decimal_places=2)
+    objects = models.Manager()
 
 class CreditedAccount(models.Model):
-    JournalID = models.ForeignKey(JournalEntry, on_delete=models.CASCADE)
+    # JournalID = models.ForeignKey(JournalEntry, on_delete=models.CASCADE)
+    COA_ID = models.CharField(max_length=500, null=True, blank=True)
     CreditID = models.AutoField(primary_key=True)
     CreditAmount = models.DecimalField(max_digits=10, decimal_places=2)
+    objects = models.Manager()

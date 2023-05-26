@@ -10,7 +10,7 @@
 <button id="addDebitedAccountBtn" type="button">Add Debited Account</button>
 <button id="addCreditedAccountBtn" type="button">Add Credited Account</button>
 <!-- /* --------------------------------Input Accounts --------------------------------*/ -->
-<form method="POST" action="{% url 'JournalEntry' %}">
+<form method="POST" action="{% url 'addJournalEntry' %}">
     {% csrf_token %}
     <table>
         <thead>
@@ -55,6 +55,8 @@ var debitedAccounts = [];
 var creditedAccounts = [];
 var debitAmounts = [];
 var creditAmounts = [];
+var debitedAccountsDict = {};
+var creditedAccountsDict = {};
 var previousDebitedAccount = null;
 
 function removeRow(button) {
@@ -122,7 +124,7 @@ function addDebitedAccount() {
 
   // Add event listener to account select element
   accountsSelect.addEventListener("change", function(event) {
-    var selectedAccount = event.target.value;
+    var selectedAccount = parseFloat(event.target.value);
     var rowIndex = Array.from(tableBody.children).indexOf(event.target.parentNode.parentNode);
     debitedAccounts[rowIndex] = selectedAccount;
     console.log("Debited Accounts:", debitedAccounts);
@@ -130,7 +132,7 @@ function addDebitedAccount() {
 
   // Add event listener to debit input element
   debitInput.addEventListener("input", function(event) {
-    var debitAmount = event.target.value;
+    var debitAmount = parseFloat(event.target.value);
     var rowIndex = Array.from(tableBody.children).indexOf(event.target.parentNode.parentNode);
     debitAmounts[rowIndex] = debitAmount;
 
@@ -194,7 +196,7 @@ function addCreditedAccount() {
 
   // Add event listener to account select element
   accountsSelect.addEventListener("change", function(event) {
-    var selectedAccount = event.target.value;
+    var selectedAccount = parseFloat(event.target.value);
     var rowIndex = Array.from(tableBody.children).indexOf(event.target.parentNode.parentNode);
     creditedAccounts[rowIndex] = selectedAccount;
     console.log("Credited Accounts:", creditedAccounts);
@@ -202,7 +204,7 @@ function addCreditedAccount() {
 
   // Add event listener to credit input element
   creditInput.addEventListener("input", function(event) {
-    var creditAmount = event.target.value;
+    var creditAmount = parseFloat(event.target.value);
     var rowIndex = Array.from(tableBody.children).indexOf(event.target.parentNode.parentNode);
 
     if (creditAmount !== "") {
@@ -218,51 +220,6 @@ function addCreditedAccount() {
     console.log("Credit amounts:", creditAmounts);
   });
 }
-
-function submitForm() {
-  var debitedAccountsDict = {};
-  var creditedAccountsDict = {};
-
-  // Creating debitedAccounts dictionary
-  for (var i = 0; i < debitedAccounts.length; i++) {
-    debitedAccountsDict[debitedAccounts[i]] = debitAmounts[i] || 0;
-  }
-
-  // Creating creditedAccounts dictionary
-  for (var i = 0; i < creditedAccounts.length; i++) {
-    creditedAccountsDict[creditedAccounts[i]] = creditAmounts[i] || 0;
-  }
-
-  var debitedAccountsJSON = JSON.stringify(debitedAccountsDict);
-  var creditedAccountsJSON = JSON.stringify(creditedAccountsDict);
-
-  console.log("Debited Accounts JSON:", debitedAccountsJSON);
-  console.log("Credited Accounts JSON:", creditedAccountsJSON);
-  // Rest of the form submission logic...
-  fetch('/JournalEntry/', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      'X-CSRFToken': getCSRFToken(), // Include CSRF token if required by Django
-    },
-    body: JSON.stringify({
-      debitedAccounts: debitedAccountsJSON,
-      creditedAccounts: creditedAccountsJSON,
-    }),
-  })
-  .then(response => response.json())
-  .then(data => {
-    // Handle the response from the Django view
-    console.log(data);
-  })
-  .catch(error => {
-    // Handle any errors that occur during the request
-    console.error(error);
-  });
-
-  // Rest of the form submission logic...
-}
-
 // Function to retrieve the CSRF token from the cookies
 function getCSRFToken() {
   const cookieValue = document.cookie
@@ -271,6 +228,63 @@ function getCSRFToken() {
     .split('=')[1];
   return cookieValue;
 }
+
+function submitForm() {
+  var debitedAccountsDict = {};
+  var creditedAccountsDict = {};
+
+  // Creating debitedAccounts dictionary
+  for (var i = 0; i < debitedAccounts.length; i++) {
+    debitedAccountsDict[debitedAccounts[i]] = parseFloat(debitAmounts[i] || 0);
+  }
+
+  // Creating creditedAccounts dictionary
+  for (var i = 0; i < creditedAccounts.length; i++) {
+    creditedAccountsDict[creditedAccounts[i]] = parseFloat(creditAmounts[i] || 0);
+  }
+
+  console.log("Debited Accounts:", debitedAccountsDict);
+  console.log("Credited Accounts:", creditedAccountsDict);
+
+  // Create a new XMLHttpRequest object
+  var xhr = new XMLHttpRequest();
+
+  // Specify the HTTP method and URL
+  var method = 'POST';
+  var url = '/addJournalEntry/';
+  xhr.open(method, url, true);
+
+  // Set the request headers
+  xhr.setRequestHeader('Content-Type', 'application/json');
+  xhr.setRequestHeader('X-CSRFToken', getCSRFToken());
+
+  // Set up a callback function to handle the response
+  xhr.onload = function() {
+    if (xhr.status === 200) {
+      // Request succeeded, handle the response here
+      var response = JSON.parse(xhr.responseText);
+      console.log(response);
+    } else {
+      // Request failed, handle the error here
+      console.error('Request failed. Status:', xhr.status);
+    }
+  };
+
+  // Convert the JSON data to a string
+  var jsonData = JSON.stringify({
+    debitedAccounts: debitedAccountsDict,
+    creditedAccounts: creditedAccountsDict,
+  });
+
+  // Send the request with the JSON data
+  console.log(jsonData)
+  xhr.send(jsonData);
+
+  // Rest of the form submission logic...
+}
+
+
+
 document.getElementById("addDebitedAccountBtn").addEventListener("click", addDebitedAccount);
 document.getElementById("addCreditedAccountBtn").addEventListener("click", addCreditedAccount);
 </script>

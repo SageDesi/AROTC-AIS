@@ -14,7 +14,8 @@ from django.contrib import messages
 from django.views import View
 from django.shortcuts import redirect
 from django.db import transaction
-from django.http import JsonResponse    
+import xml.etree.ElementTree as ET
+from django.http import HttpResponseBadRequest, JsonResponse
 import json
 
 # from .models import Task
@@ -62,53 +63,54 @@ def ChartOfAccounts(request):
         Acc.save()
     return render(request, "CFO/ChartOfAccounts.html", {'Account':Account}) 
 
-# def JournalEntry(request):
-#     Account = COA.objects.order_by('concatenated_id')
-#     if request.method == "POST":
-#         debit = request.POST['debit']
-#     return render(request, "CFO/JournalEntry.html", {'Account':Account}) 
+def JournalEntry(request):
+    accounts = COA.objects.all()
+    # Render the form template with accounts data
+    return render(request, 'CFO/JournalEntry.html', {'Account': accounts})
 
-class JournalEntry(View):
-    def get(self, request):
-        accounts = COA.objects.all()
-        # Render the form template
-        return render(request, 'CFO/JournalEntry.html',{'Account':accounts})
+def addJournalEntry(request):
+    if request.method == "POST":
+        content_type = request.META.get('CONTENT_TYPE')
 
-    def post(self, request):
-        accounts = COA.objects.all()
-        # Retrieve the JSON data from the form submission
-        transactions_json = request.POST.get('transactions')
+        if content_type == 'application/json':
+            # Handle JSON request
+            json_data = json.loads(request.body)
+            debited_accounts = json_data.get('debitedAccounts')
+            credited_accounts = json_data.get('creditedAccounts')
+        elif content_type == 'application/xml':
+            # Handle XML request
+            xml_data = request.body
+            xml_root = ET.fromstring(xml_data)
+            debited_accounts = {}
+            credited_accounts = {}
 
-        if transactions_json:
-            # Parse the JSON data into a Python list of dictionaries
-            transactions = json.loads(transactions_json)
+            for account_element in xml_root.iter('account'):
+                account_id = account_element.get('id')
+                amount = float(account_element.text or 0)
 
-            # Process and save the transactions
-            for transaction_data in transactions:
-                account = transaction_data.get('account')
-                amount = transaction_data.get('amount')
-                category = transaction_data.get('category')
+                if account_element.get('type') == 'debited':
+                    debited_accounts[account_id] = amount
+                elif account_element.get('type') == 'credited':
+                    credited_accounts[account_id] = amount
+                else:
+                    return HttpResponseBadRequest("Invalid XML data")
 
-                # Create a new Transaction instance and save it
-                transaction = Transaction(JournalID=account, TransactionAmount=amount, TransactionCategory=category)
-                transaction.save()
+        else:
+            return HttpResponseBadRequest("Unsupported content type")
 
-        # Redirect to a success page or render a response as needed
-        return render(request, 'CFO/JournalEntry.html',{'Account':accounts})
+        if debited_accounts and credited_accounts:
+            # Rest of your code for saving the journal entry
 
-def get_accounts(request):
-    accounts = Account.objects.all()
+            # Return a JSON response to indicate success
+            response_data = {'message': 'Data saved successfully'}
+            return JsonResponse(response_data)
+        else:
+            # Return a JSON response to indicate an error
+            response_data = {'message': 'Invalid data'}
+            return JsonResponse(response_data, status=400)
 
-    # Serialize the account data to JSON format
-    serialized_accounts = [
-        {
-            'pk': account.pk,
-            'AccountName': account.AccountName
-        }
-        for account in accounts
-    ]
-
-    return JsonResponse(serialized_accounts, safe=False)
+    else:
+        return HttpResponseBadRequest("Invalid request method")
 
 def EditAccount(request,pk):
     AccDetails = COA.objects.get(pk=pk)
