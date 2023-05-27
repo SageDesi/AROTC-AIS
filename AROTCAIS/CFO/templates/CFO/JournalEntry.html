@@ -1,52 +1,75 @@
 {% extends 'CFO/Index.html' %}{% load static %}{% block title %}<title>Journal Entry</title>{% endblock %}{% block content %}
 <hr>
-<button id="addDebitedAccountBtn" type="button">Add Debited Account</button>
-<button id="addCreditedAccountBtn" type="button">Add Credited Account</button>
-<!-- /* --------------------------------Input Accounts --------------------------------*/ -->
-<form method="POST" action="{% url 'addJournalEntry' %}">
-    {% csrf_token %}
-    <table>
-        <thead>
+
+<style>
+  .child {
+      display: inline-block;
+      /* padding: 1% 1%; */
+      vertical-align: middle;
+      width:49.5%;
+      height:150px;
+  }
+</style>
+<h1 style="text-align: center;">Journal Entry</h1>
+<div class="container">
+  <div class="addbuttons">
+    <button class="btn btn-primary" id="addDebitedAccountBtn" type="button">Add Debited Account</button>
+    <button class="btn btn-secondary" id="addCreditedAccountBtn" type="button">Add Credited Account</button>
+  </div>
+  
+  <!-- /* --------------------------------Input Accounts --------------------------------*/ -->
+  <form method="POST" action="{% url 'addJournalEntry' %}">
+      {% csrf_token %}
+      <table class="table table-light">
+          <thead>
+              <tr>
+                  <th>Delete</th>
+                  <th>Accounts</th>
+                  <th>Dr. Amount</th>
+                  <th>Cr. Amount</th>
+              </tr>
+          </thead>
+          <tbody id="debit">
+          </tbody>
+          <tfoot id="credit">
+          </tfoot>
+      </table>
+      <br>
+      <input type="hidden" id="debitJSON" name="debitJSON">
+      <input type="hidden" id="creditJSON" name="creditJSON">
+
+      <div class="child">
+        <table>
+          <thead>
+            <th>Description</th>
+          </thead>
+          <tbody>
             <tr>
-                <th>Delete</th>
-                <th>Accounts</th>
-                <th>Dr. Amount</th>
-                <th>Cr. Amount</th>
+              <td rowspan="2"><textarea name="" id="" rows="3" cols="68"></textarea></td>
             </tr>
-        </thead>
-        <tbody id="debit">
-        </tbody>
-        <tfoot id="credit">
-        </tfoot>
-    </table>
-    <br>
-    <button type="submit" onclick="submitForm()">Add Transaction</button>
-    <input type="hidden" id="debitJSON" name="debitJSON">
-    <input type="hidden" id="creditJSON" name="creditJSON">
-    <table>
-      <thead>
-        <th>Description</th>
-      </thead>
-      <tbody>
-        <tr>
-          <td><textarea name="" id="" cols="100" rows="2"></textarea></td>
-        </tr>
-      </tbody>
-    </table>
-    <table>
-      <thead>
-        <th>Image Receipt</th>
-      </thead>
-      <tbody>
-        <tr>
-          <td><input type="image"></td>
-        </tr>
-      </tbody>
-    </table>
-</form>
+          </tbody>
+        </table>
+      </div>
+      <div class="child">
+        <table>
+          <thead>
+            <th>Proof of Receipt/s</th>
+          </thead>
+          <tbody>
+            <tr>
+              <td rowspan="2"><input type="image" style="text-align: center;"></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <button class="btn btn-success" type="submit" onclick="submitForm()">Add Transaction</button>
+  </form>
+</div>
+
 <hr>
 <!-- /* --------------------------------Journal Entries Display --------------------------------*/ -->
-<table>
+<div class="container">
+  <table>
     <thead>
         <tr>
             <th>Journal ID</th>
@@ -59,7 +82,9 @@
     <tbody>
         <!-- Journal entry rows will be displayed here -->
     </tbody>
-</table>
+  </table>
+</div>
+
 <!-- /* --------------------------------Journal Entries Display --------------------------------*/ -->
 
 <script>

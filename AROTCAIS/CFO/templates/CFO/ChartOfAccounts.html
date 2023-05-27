@@ -6,13 +6,37 @@
 {% endblock %}
 
 {% block content %}
-<hr>
+<style>
+    .scrollable-div {
+        width: 75%; 
+        height: 200px; 
+        overflow: auto;
+        margin: auto;
+    }
+    /* Webkit-based browsers */
+    .scrollable-div::-webkit-scrollbar {
+    width: 8px; /* Adjust the width as needed */
+    }
+
+    .scrollable-div::-webkit-scrollbar-track {
+    background: #f1f1f1; /* Set the background color of the track */
+    }
+
+    .scrollable-div::-webkit-scrollbar-thumb {
+    background: #888; /* Set the color of the scrollbar thumb */
+    }
+
+    .scrollable-div::-webkit-scrollbar-thumb:hover {
+    background: #555; /* Set the color of the scrollbar thumb on hover */
+    }
+</style>
 <!-- /* --------------------------------Input Accounts --------------------------------*/ -->
 <div class="container">
-    <h1>Input New Account</h1>
+    <hr>
+    <h3>Input New Account</h3>
     <form method="POST" action="">
     {% csrf_token %}
-    <table>
+    <table style="font-size:15px;">
         <tbody>
             <tr>
                 <td>SubID:</td>
@@ -49,25 +73,20 @@
             </tr>
         </tbody>
     </table>
-    <br>
     <button class="btn btn-success" type="submit" style="width:12%;">Add Account</button>
     <button class="btn btn-primary" type="reset" style="width:12%;">Clear</button>
-    <hr>
     </form>
+    <hr>
 </div>
 
 <!-- /* --------------------------------Input Accounts --------------------------------*/ -->
 
-<br>
-<br>
-
-
-
 <!-- /* --------------------------------Chart of Accounts Display --------------------------------*/ -->
-<div class="container">
+<div class="scrollable-div">
     {% include 'CFO/messages.html' %}
-    <h1>Accounts</h1>
-    <table>
+
+    <h3>Accounts</h3>
+    <table style="font-size:15px;">
         <thead>
             <th>COA ID</th>
             <th>Account Name</th>
