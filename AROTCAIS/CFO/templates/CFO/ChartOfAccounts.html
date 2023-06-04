@@ -34,7 +34,7 @@
 <div class="container">
     <hr>
     <h3>Input New Account</h3>
-    <form method="POST" action="">
+    <form method="POST" id="add_acc" action="">
     {% csrf_token %}
     <table style="font-size:15px;">
         <tbody>
@@ -73,7 +73,7 @@
             </tr>
         </tbody>
     </table>
-    <button class="btn btn-success" type="submit" style="width:12%;">Add Account</button>
+    <button class="btn btn-success" type="submit" style="width:12%;" onclick="confirmAction()" form="add_acc">Add Account</button>
     <button class="btn btn-primary" type="reset" style="width:12%;">Clear</button>
     </form>
     <hr>
@@ -105,7 +105,7 @@
                 <td>{{x.AccountCategory}}</td>
                 <td>{{x.AccountDescription}}</td>
                 <td>
-                    <a class="btn btn-secondary" href="{% url 'EditAccount' pk=x.pk %}" style="width:100%;">Edit</a>
+                    <a class="btn btn-secondary" href="{% url 'EditAccount' pk=x.concatenated_id %}" style="width:100%;">Edit</a>
                     <a class="btn btn-danger" href="#" style="width:100%;">Delete</a>
                 </td>
             </tr>
@@ -115,4 +115,15 @@
 </div>
 
 <!-- /* --------------------------------Chart of Accounts Display --------------------------------*/ -->
+
+<script>
+    function confirmAction() {
+        event.preventDefault();
+        if (confirm('Are you sure you want to add a new account?')) {
+            document.getElementById('add_acc').submit();
+        }
+    }
+</script>
+
+
 {% endblock %}

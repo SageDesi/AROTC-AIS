@@ -23,7 +23,7 @@ from django.views.decorators.csrf import csrf_protect
 from .forms import PositionForm
 
 from .models import *
-from .models import COA
+from .models import COA, SuperCOA
 
 class CustomLoginView(LoginView):
     template_name = 'CFO/login.html'
@@ -60,7 +60,7 @@ def ChartOfAccounts(request):
         AccName = request.POST['AccName']
         To_Increase = request.POST['To_Increase']
         AccDescription = request.POST['AccDescription']
-        Acc = COA(SuperID=AccCatVal, SubID=SubID, AccountName=AccName, AccountCategory=AccCat, To_Increase=To_Increase, AccountDescription=AccDescription)
+        Acc = COA(SuperID=SuperCOA.objects.get(pk=AccCatVal), SubID=SubID, AccountName=AccName, AccountCategory=AccCat, To_Increase=To_Increase, AccountDescription=AccDescription)
         Acc.save()
     return render(request, "CFO/ChartOfAccounts.html", {'Account':Account}) 
 
