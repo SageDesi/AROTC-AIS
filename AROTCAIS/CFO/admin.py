@@ -6,8 +6,8 @@ admin.site.register(SuperCOA)
 
 admin.site.register(COA)
 
-admin.site.register(JournalEntry)
+# admin.site.register(JournalEntry)
 
-admin.site.register(DebitedAccount)
+# admin.site.register(DebitedAccount)
 
-admin.site.register(CreditedAccount)
+# admin.site.register(CreditedAccount)

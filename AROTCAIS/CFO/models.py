@@ -30,34 +30,34 @@ class COA(models.Model):
         super().save(*args, **kwargs)
 
     def getPK(self):
-        return self.concatenated_id
+        return self.pk
 
 
-class JournalEntry(models.Model):
-    JournalID = models.AutoField(primary_key=True)
-    DateRealized = models.DateTimeField(auto_now=False, null=True)
-    DateInputted = models.DateTimeField(auto_now=False, null=True)
-    JournalDescription = models.CharField(max_length=500, null=True, blank=True)
-    Receipt = models.ImageField(upload_to='images/', null=True)
-    objects = models.Manager()
+# class JournalEntry(models.Model):
+#     JournalID = models.AutoField(primary_key=True)
+#     DateRealized = models.DateTimeField(auto_now=False, null=True)
+#     DateInputted = models.DateTimeField(auto_now=False, null=True)
+#     JournalDescription = models.CharField(max_length=500, null=True, blank=True)
+#     Receipt = models.ImageField(upload_to='images/', null=True)
+#     objects = models.Manager()
 
-class DebitedAccount(models.Model):
-    # JournalID = models.ForeignKey(JournalEntry, on_delete=models.CASCADE)
-    COA_ID = models.ForeignKey(COA, on_delete=models.CASCADE)
-    DebitID = models.AutoField(primary_key=True)
-    DebitAmount = models.DecimalField(max_digits=10, decimal_places=2)
-    objects = models.Manager()
+# class DebitedAccount(models.Model):
+#     # JournalID = models.ForeignKey(JournalEntry, on_delete=models.CASCADE)
+#     COA_ID = models.ForeignKey(COA, on_delete=models.CASCADE)
+#     DebitID = models.AutoField(primary_key=True)
+#     DebitAmount = models.DecimalField(max_digits=10, decimal_places=2)
+#     objects = models.Manager()
 
-    def __str__(self):
-        return "Account: " + str(self.COA_ID) + " | Debited Amount: " + str(self.DebitAmount)
+#     def __str__(self):
+#         return "Account: " + str(self.COA_ID) + " | Debited Amount: " + str(self.DebitAmount)
 
 
-class CreditedAccount(models.Model):
-    # JournalID = models.ForeignKey(JournalEntry, on_delete=models.CASCADE)
-    COA_ID = models.ForeignKey(COA, on_delete=models.CASCADE)
-    CreditID = models.AutoField(primary_key=True)
-    CreditAmount = models.DecimalField(max_digits=10, decimal_places=2)
-    objects = models.Manager()
+# class CreditedAccount(models.Model):
+#     # JournalID = models.ForeignKey(JournalEntry, on_delete=models.CASCADE)
+#     COA_ID = models.ForeignKey(COA, on_delete=models.CASCADE)
+#     CreditID = models.AutoField(primary_key=True)
+#     CreditAmount = models.DecimalField(max_digits=10, decimal_places=2)
+#     objects = models.Manager()
 
-    def __str__(self):
-        return "Account: " + str(self.COA_ID) + " | Credited Amount: " + str(self.CreditAmount)
+#     def __str__(self):
+#         return "Account: " + str(self.COA_ID) + " | Credited Amount: " + str(self.CreditAmount)

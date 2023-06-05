@@ -60,8 +60,17 @@ def ChartOfAccounts(request):
         AccName = request.POST['AccName']
         To_Increase = request.POST['To_Increase']
         AccDescription = request.POST['AccDescription']
-        Acc = COA(SuperID=SuperCOA.objects.get(pk=AccCatVal), SubID=SubID, AccountName=AccName, AccountCategory=AccCat, To_Increase=To_Increase, AccountDescription=AccDescription)
-        Acc.save()
+
+        
+        if SubID != "" or AccCatVal != "" or AccCat != "" or AccName != "" or To_Increase != "" :
+            Acc = COA(SuperID=SuperCOA.objects.get(pk=AccCatVal), SubID=SubID, AccountName=AccName, AccountCategory=AccCat, To_Increase=To_Increase, AccountDescription=AccDescription)
+            Acc.save()
+            messages.success(request, 'Account Added!')
+        else:          
+            messages.warning(request,"One or more fields are empty!")
+            return redirect("ChartOfAccounts") 
+
+
     return render(request, "CFO/ChartOfAccounts.html", {'Account':Account}) 
 
 def JournalEntry(request):
@@ -96,7 +105,7 @@ def addJournalEntry(request):
     return render(request, 'CFO/JournalEntry.html', {'Account': accounts})
     
 def EditAccount(request,pk):
-    AccDetails = COA.objects.get(pk=pk)
+    AccDetails = COA.objects.get(concatenated_id=pk)
     
     if(request.method == "POST"):
         AccCatVal = request.POST['AccCat'] #Values are '1' for Asset, '2' for Liability, and so on. AccCatVal is short for Account Category Value
@@ -106,11 +115,11 @@ def EditAccount(request,pk):
         To_Increase = request.POST['To_Increase']
         AccDescription = request.POST['AccDescription']
 
-        if SubID == "" or AccCat == "" or AccName == "" or To_Increase == "" or AccDescription == "" :
+        if SubID == "" or AccCat == "" or AccName == "" or To_Increase == "" :
             messages.warning(request,"One or more fields are empty!")
-            return redirect("EditAccount", pk=pk) 
+            return redirect("EditAccount", concatenated_id=pk) 
         else:
-            COA.objects.filter(pk=pk).update(SubID = SubID, AccountCategory = AccCat, AccountName=AccName, To_Increase=To_Increase, AccountDescription=AccDescription)
+            COA.objects.filter(concatenated_id=pk).update(SubID = SubID, AccountCategory = AccCat, AccountName=AccName, To_Increase=To_Increase, AccountDescription=AccDescription)
             messages.success(request, 'Account Updated!')
             
             return redirect('ChartOfAccounts')
@@ -119,6 +128,6 @@ def EditAccount(request,pk):
         return render(request, 'CFO/EditAccount.html', {'acc':AccDetails}) 
 
 def DeleteAccount(request, pk):
-    item.objects.filter(pk=pk).delete()
-    messages.warning(request,"Item Deleted!")
+    COA.objects.filter(concatenated_id=pk).delete()
+    messages.warning(request,"Account Deleted!")
     return redirect('ChartOfAccounts')
